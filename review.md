@@ -1,16 +1,17 @@
-# Iteration with loops
+# Control Structures
+## Iteration with loops
 
 ``for``loop
 ``enumerate``loop
 
 * "in" keywords could be used to iterate over dictornay keys.
 
-# Condidtional statements
+## Condidtional statements
 
 ``<``,``>``,``==``;
 ``if``, ``elif``, ``else``.
 
-# dictornary 
+## dictornary 
 
 def when_offered(courses, course):  
     # TODO: Fill out the function here.  
@@ -21,3 +22,8 @@ def when_offered(courses, course):
     # TODO: Return list of semesters here.  
     return semesters  
 
+# Functions & Generators
+
+a function is started with ``def`` and ended with ``return`` one or more values.
+
+``yield`` is a keyword like ``return``
