@@ -1,0 +1,6 @@
+# Chessboard Corner Detection using Saddle Points
+# Required dependencies
+
+opencv-python>=4.5.0
+numpy>=1.20.0
+scipy>=1.7.0
