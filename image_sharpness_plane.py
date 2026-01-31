@@ -23,6 +23,11 @@ import numpy as np
 from numpy.linalg import lstsq
 
 
+# Physical unit constants
+PIXEL_SIZE_UM = 0.32  # Distance per pixel in micrometers (µm)
+Z_STEP_UM = 1.0       # Distance between each image index in micrometers (µm)
+
+
 @dataclass
 class BlockInfo:
     """Information about a single block in the image grid."""
@@ -297,40 +302,54 @@ def process_images(
 def analyze_and_fit_plane(
     blocks: List[BlockInfo],
     best_indices: np.ndarray,
+    pixel_size_um: float = PIXEL_SIZE_UM,
+    z_step_um: float = Z_STEP_UM,
     verbose: bool = True
 ) -> Tuple[float, float, float, float, float, float]:
     """
     Fit a plane to the block centers and best image indices.
     
+    Coordinates are converted to physical units (micrometers) before fitting:
+    - x, y: pixel coordinates * pixel_size_um
+    - z: image index * z_step_um
+    
     Args:
         blocks: List of BlockInfo objects
         best_indices: Array of image indices with max sharpness for each block
+        pixel_size_um: Size of each pixel in micrometers (default: 0.32 µm)
+        z_step_um: Distance between each image index in micrometers (default: 1 µm)
         verbose: Whether to print results
         
     Returns:
         Tuple of (a, b, c, angle_x, angle_y, angle_with_z)
     """
-    # Extract coordinates
-    x = np.array([block.center_x for block in blocks])
-    y = np.array([block.center_y for block in blocks])
-    z = best_indices.astype(np.float64)
+    # Extract coordinates in pixels
+    x_pixels = np.array([block.center_x for block in blocks])
+    y_pixels = np.array([block.center_y for block in blocks])
+    z_indices = best_indices.astype(np.float64)
     
-    # Fit plane
-    a, b, c = fit_plane(x, y, z)
+    # Convert to physical units (micrometers)
+    x_um = x_pixels * pixel_size_um
+    y_um = y_pixels * pixel_size_um
+    z_um = z_indices * z_step_um
     
-    # Calculate angles
+    # Fit plane in physical units: z(µm) = a*x(µm) + b*y(µm) + c(µm)
+    a, b, c = fit_plane(x_um, y_um, z_um)
+    
+    # Calculate angles (a and b are now dimensionless: µm/µm)
     angle_x, angle_y, angle_with_z = calculate_plane_angles(a, b)
     
     if verbose:
         print("\n" + "="*60)
         print("PLANE FITTING RESULTS")
         print("="*60)
-        print(f"\nPlane equation: z = {a:.10f}*x + {b:.10f}*y + {c:.6f}")
-        print(f"\nAlternatively: {a:.10f}*x + {b:.10f}*y - z + {c:.6f} = 0")
-        print(f"\nCoefficients:")
-        print(f"  a (x coefficient): {a:.10f}")
-        print(f"  b (y coefficient): {b:.10f}")
-        print(f"  c (constant):      {c:.6f}")
+        print(f"\nPhysical units: pixel size = {pixel_size_um} µm, z step = {z_step_um} µm")
+        print(f"\nPlane equation: z(µm) = {a:.10f}*x(µm) + {b:.10f}*y(µm) + {c:.6f}")
+        print(f"\nAlternatively: {a:.10f}*x + {b:.10f}*y - z + {c:.6f} = 0  (all in µm)")
+        print(f"\nCoefficients (dimensionless slopes):")
+        print(f"  a (dz/dx): {a:.10f}")
+        print(f"  b (dz/dy): {b:.10f}")
+        print(f"  c (z-intercept in µm): {c:.6f}")
         print(f"\nPlane angles:")
         print(f"  Tilt around X-axis (slope in Y direction): {angle_x:.4f} mrad")
         print(f"  Tilt around Y-axis (slope in X direction): {angle_y:.4f} mrad")
@@ -474,7 +493,9 @@ def save_results_to_csv(
     image_files: List[str],
     best_indices: np.ndarray,
     a: float, b: float, c: float,
-    angle_x: float, angle_y: float, angle_with_z: float
+    angle_x: float, angle_y: float, angle_with_z: float,
+    pixel_size_um: float = PIXEL_SIZE_UM,
+    z_step_um: float = Z_STEP_UM
 ):
     """Save results to a CSV file."""
     import csv
@@ -484,10 +505,12 @@ def save_results_to_csv(
         
         # Write plane info
         writer.writerow(['# Plane Fitting Results'])
-        writer.writerow(['Plane Equation', f'z = {a}*x + {b}*y + {c}'])
-        writer.writerow(['Coefficient a (x)', a])
-        writer.writerow(['Coefficient b (y)', b])
-        writer.writerow(['Coefficient c (constant)', c])
+        writer.writerow(['Pixel Size (um)', pixel_size_um])
+        writer.writerow(['Z Step (um)', z_step_um])
+        writer.writerow(['Plane Equation', f'z(um) = {a}*x(um) + {b}*y(um) + {c}'])
+        writer.writerow(['Coefficient a (dz/dx)', a])
+        writer.writerow(['Coefficient b (dz/dy)', b])
+        writer.writerow(['Coefficient c (z-intercept um)', c])
         writer.writerow(['Tilt around X-axis (mrad)', angle_x])
         writer.writerow(['Tilt around Y-axis (mrad)', angle_y])
         writer.writerow(['Angle with Z-axis (mrad)', angle_with_z])
@@ -495,8 +518,9 @@ def save_results_to_csv(
         
         # Write block info
         writer.writerow(['# Block Information'])
-        header = ['Block Index', 'Row', 'Col', 'Center X', 'Center Y', 
-                  'Best Image Index', 'Best Image Name', 'Max Sharpness']
+        header = ['Block Index', 'Row', 'Col', 'Center X (pixels)', 'Center Y (pixels)', 
+                  'Center X (um)', 'Center Y (um)', 'Best Image Index', 'Best Z (um)',
+                  'Best Image Name', 'Max Sharpness']
         writer.writerow(header)
         
         max_sharpness = np.max(sharpness_matrix, axis=0)
@@ -508,7 +532,10 @@ def save_results_to_csv(
                 block.col,
                 block.center_x,
                 block.center_y,
+                block.center_x * pixel_size_um,
+                block.center_y * pixel_size_um,
                 best_idx,
+                best_idx * z_step_um,
                 os.path.basename(image_files[best_idx]),
                 max_sharpness[block_idx]
             ])
