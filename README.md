@@ -20,6 +20,19 @@ python3 -m pip install -r requirements.txt
 python3 detect_corners.py /path/to/image.png --method saddle
 ```
 
+- **Cross template center (subpixel)**:
+  - If you already have a cross template image:
+
+```bash
+python3 detect_cross_template.py /path/to/image.png --template /path/to/cross_template.png
+```
+
+  - Or using a synthetic “+” template (tune arm/thickness/scales as needed):
+
+```bash
+python3 detect_cross_template.py /path/to/image.png --arm-len 18 --thickness 5 --scales 0.75,1.0,1.25
+```
+
 - **OpenCV saddle-based ordered grid (pattern size required; returns subpixel corners)**:
 
 ```bash
