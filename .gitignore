@@ -6,3 +6,9 @@ __pycache__/
 # Script outputs / local datasets
 samples/
 corners_*.png
+cross_detected_*.png
+cross_centers_*.csv
+
+# Extracted images from zip files
+X471369_Y-139189_Z3463.png
+X471778_Y-139576_Z3463.png
