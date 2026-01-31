@@ -188,7 +188,7 @@ def calculate_plane_angles(a: float, b: float) -> Tuple[float, float, float]:
         b: Coefficient for y in plane equation
         
     Returns:
-        Tuple of (angle_x, angle_y, angle_with_xy_plane) in degrees
+        Tuple of (angle_x, angle_y, angle_with_xy_plane) in milliradians (mrad)
         - angle_x: Angle between plane's projection on XZ plane and XY plane
         - angle_y: Angle between plane's projection on YZ plane and XY plane
         - angle_with_xy_plane: Angle between plane normal and Z-axis
@@ -202,15 +202,16 @@ def calculate_plane_angles(a: float, b: float) -> Tuple[float, float, float]:
     # This tells us how much the plane is tilted from horizontal
     z_axis = np.array([0, 0, 1])
     cos_angle_z = np.dot(normal, z_axis) / normal_mag
-    angle_with_z = np.degrees(np.arccos(np.clip(cos_angle_z, -1.0, 1.0)))
+    # Convert radians to milliradians (1 rad = 1000 mrad)
+    angle_with_z = np.arccos(np.clip(cos_angle_z, -1.0, 1.0)) * 1000.0
     
     # Tilt angle around X-axis (looking along X, rotation in YZ plane)
     # This is arctan(b) - the slope in Y direction
-    angle_x = np.degrees(np.arctan(b))
+    angle_x = np.arctan(b) * 1000.0  # Convert to mrad
     
     # Tilt angle around Y-axis (looking along Y, rotation in XZ plane)
     # This is arctan(a) - the slope in X direction
-    angle_y = np.degrees(np.arctan(a))
+    angle_y = np.arctan(a) * 1000.0  # Convert to mrad
     
     return angle_x, angle_y, angle_with_z
 
@@ -331,9 +332,9 @@ def analyze_and_fit_plane(
         print(f"  b (y coefficient): {b:.10f}")
         print(f"  c (constant):      {c:.6f}")
         print(f"\nPlane angles:")
-        print(f"  Tilt around X-axis (slope in Y direction): {angle_x:.4f} degrees")
-        print(f"  Tilt around Y-axis (slope in X direction): {angle_y:.4f} degrees")
-        print(f"  Angle between plane normal and Z-axis:     {angle_with_z:.4f} degrees")
+        print(f"  Tilt around X-axis (slope in Y direction): {angle_x:.4f} mrad")
+        print(f"  Tilt around Y-axis (slope in X direction): {angle_y:.4f} mrad")
+        print(f"  Angle between plane normal and Z-axis:     {angle_with_z:.4f} mrad")
         print(f"\nNormal vector: ({-a:.10f}, {-b:.10f}, 1.0)")
         print("="*60)
     
@@ -487,9 +488,9 @@ def save_results_to_csv(
         writer.writerow(['Coefficient a (x)', a])
         writer.writerow(['Coefficient b (y)', b])
         writer.writerow(['Coefficient c (constant)', c])
-        writer.writerow(['Tilt around X-axis (degrees)', angle_x])
-        writer.writerow(['Tilt around Y-axis (degrees)', angle_y])
-        writer.writerow(['Angle with Z-axis (degrees)', angle_with_z])
+        writer.writerow(['Tilt around X-axis (mrad)', angle_x])
+        writer.writerow(['Tilt around Y-axis (mrad)', angle_y])
+        writer.writerow(['Angle with Z-axis (mrad)', angle_with_z])
         writer.writerow([])
         
         # Write block info
