@@ -1,0 +1,46 @@
+{
+  "image_size": [
+    4504,
+    4504
+  ],
+  "center": [
+    2273.77471306407,
+    2242.649675720814
+  ],
+  "half_arms": {
+    "top": 2242.649675720814,
+    "bottom": 2260.350324279186,
+    "left": 2273.77471306407,
+    "right": 2229.22528693593
+  },
+  "full_arms": {
+    "horizontal": 4503.0,
+    "vertical": 4503.0
+  },
+  "ratios": {
+    "left/right": 1.0199842637660788,
+    "right/left": 0.9804072822728745,
+    "top/bottom": 0.9921690684986996,
+    "bottom/top": 1.0078927389997652,
+    "horizontal/vertical": 1.0,
+    "vertical/horizontal": 1.0
+  },
+  "extreme_points": {
+    "top": [
+      128,
+      0
+    ],
+    "bottom": [
+      0,
+      4503
+    ],
+    "left": [
+      0,
+      100
+    ],
+    "right": [
+      4503,
+      4467
+    ]
+  }
+}
