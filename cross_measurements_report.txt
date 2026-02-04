@@ -1,0 +1,85 @@
+================================================================================
+CROSS ARM MEASUREMENTS REPORT
+================================================================================
+
+Analysis of cross patterns detected in microscopy images.
+
+================================================================================
+CROSS 1 (from X471778_Y-139576_Z3463.png)
+================================================================================
+
+Image dimensions: 4504 x 4504 pixels
+Cross center position: (2497.94, 3189.73)
+
+HALF ARM LENGTHS (from center to edge):
+----------------------------------------
+  Top arm:           89.73 pixels
+  Bottom arm:        91.27 pixels
+  Left arm:          89.94 pixels
+  Right arm:         91.06 pixels
+
+FULL ARM LENGTHS:
+-----------------
+  Vertical (top + bottom):    181.00 pixels
+  Horizontal (left + right):  181.00 pixels
+
+ARM RATIOS:
+-----------
+  Top / Bottom:               0.9830
+  Bottom / Top:               1.0173
+  Left / Right:               0.9877
+  Right / Left:               1.0125
+  Vertical / Horizontal:      1.0000
+
+
+================================================================================
+CROSS 2 (from X471369_Y-139189_Z3463.png)
+================================================================================
+
+Image dimensions: 4504 x 4504 pixels
+Cross center position: (3251.49, 2494.80)
+
+HALF ARM LENGTHS (from center to edge):
+----------------------------------------
+  Top arm:           89.80 pixels
+  Bottom arm:        91.20 pixels
+  Left arm:          90.49 pixels
+  Right arm:         91.51 pixels
+
+FULL ARM LENGTHS:
+-----------------
+  Vertical (top + bottom):    181.00 pixels
+  Horizontal (left + right):  182.00 pixels
+
+ARM RATIOS:
+-----------
+  Top / Bottom:               0.9846
+  Bottom / Top:               1.0156
+  Left / Right:               0.9888
+  Right / Left:               1.0113
+  Vertical / Horizontal:      0.9945
+
+
+================================================================================
+SUMMARY
+================================================================================
+
+Average Half Arm Lengths:
+  Top arm:       89.77 pixels
+  Bottom arm:    91.24 pixels
+  Left arm:      90.22 pixels
+  Right arm:     91.29 pixels
+
+Average Ratios:
+  Top/Bottom:    0.984 (top arm is ~1.6% shorter than bottom)
+  Left/Right:    0.988 (left arm is ~1.2% shorter than right)
+  Vertical/Horizontal: ~1.00 (arms are nearly equal in total length)
+
+Observations:
+- The crosses are highly symmetric with slight asymmetry
+- Bottom arm is consistently slightly longer than top arm
+- Right arm is consistently slightly longer than left arm
+- Total vertical and horizontal lengths are nearly equal
+- The cross pattern appears to be a machined/etched fiducial marker
+
+================================================================================
